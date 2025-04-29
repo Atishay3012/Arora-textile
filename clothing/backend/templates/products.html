@@ -1,0 +1,182 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+
+Shop
+{% endblock %}
+{% block body %}
+
+
+    <!-- Shop Section Begin -->
+    <section class="shop spad">
+        <div class="container">
+            <div class="row">
+                <button type="button" data-toggle="collapse" data-target="#filters"
+                 class="visible-xs visible-sm collapsed d-md-none">Filter</button>
+                 <!-- Your filter content here -->
+                 
+                 <div class="col-lg-3">
+                        <div id="filters" class="collapse">
+                        <div class="shop__sidebar">
+                            <div class="shop__sidebar__search">
+      
+                            </div>
+                            <div class="shop__sidebar__accordion">
+                                <div class="accordion" id="accordionExample">
+                                    <div class="card">
+                                        <div class="card-heading">
+                                            <a data-toggle="collapse" data-target="#collapseOne">Categories</a>
+                                        </div>
+                                        <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
+                                            <div class="card-body">
+                                                <div class="shop__sidebar__categories">
+                                                    <ul class="nice-scroll">
+                                                        {% for category, label in categories %}
+                                                        <li><a href="{% url 'show_products' category %}">{{ label }}</a></li>
+                                                        {% endfor %}
+            
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--
+                                    <div class="card">
+                                        <div class="card-heading">
+                                            <a data-toggle="collapse" data-target="#collapseOne">Subcategories</a>
+                                        </div>
+                                        <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
+                                            <div class="card-body">
+                                                <div class="shop__sidebar__categories">
+                                                    <ul class="nice-scroll">
+                                                        {% for subcategory, label in subcategories %}
+                                                        <li><a href="{% url 'show_products' subcategory %}">{{ label }}</a></li>
+                                                        {% endfor %}
+            
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>-->
+            
+
+                                    <div class="card">
+                                        <div class="card-heading">
+                                            <a data-toggle="collapse" data-target="#collapseFour">Size</a>
+                                        </div>
+                                        <div id="collapseFour" class="collapse show" data-parent="#accordionExample">
+                                            <div class="card-body">
+                                                <div class="shop__sidebar__size">
+                                                    <label for="xs">xs
+                                                        <input type="checkbox" id="xs">
+                                                    </label>
+                                                    <label for="sm">s
+                                                        <input type="checkbox" id="sm">
+                                                    </label>
+                                                    <label for="md">m
+                                                        <input type="checkbox" id="md">
+                                                    </label>
+                                                    <label for="xl">xl
+                                                        <input type="checkbox" id="xl">
+                                                    </label>
+                                                    <label for="2xl">2xl
+                                                        <input type="checkbox" id="2xl">
+                                                    </label>
+                                                    <label for="xxl">xxl
+                                                        <input type="checkbox" id="xxl">
+                                                    </label>
+                                                    <label for="3xl">3xl
+                                                        <input type="checkbox" id="3xl">
+                                                    </label>
+                                                    <label for="4xl">4xl
+                                                        <input type="checkbox" id="4xl">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="shop__product__option">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="shop__product__option__left">
+                                    <p></p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                        {% for product in page_obj %}
+                            <div class="col-lg-4 col-md-6 col-sm-6 col-6">
+                            
+                                
+                                    <div class="product__item" data-size="{{ product.size }}" data-price="{{ product.price }}">
+
+                                        <div class="product__item__pic set-bg" data-setbg="{% static product.path %}"
+                                            onclick="window.location.href='{{ product.get_absolute_url }}'">
+                                            {% if product.label != 'N' %}
+                                            <span class="label">{{ product.label }}</span>
+                                            {% endif %}
+                                                <ul class="product__hover">
+                                                    <li><a onclick="addToFavorites('{{ product.id }}')" href="#"><img
+                                                                src="{% static 'frontend/img/icon/heart.png' %}" alt=""></a></li>
+                                                </ul>
+                                        </div>
+                            
+                                        <div class="product__item__text">
+                                            <h6>{{ product.product_name }}</h6>
+                                            <a href="javascript:void(0)" onclick="addToCart('{{product.id}}')" class="add-cart">+ Add To Cart</a>
+                                            <div class="rating">
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                            </div>
+                                            <h5>Rs {{ product.price|floatformat:2 }}</h5>
+
+                                        </div>
+                                    </div>
+                                
+                            </div>
+                                  {% endfor %}
+                    
+                    
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="product__pagination">
+                                {% if page_obj.has_previous %}
+                                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                                {% endif %}
+                                {% for i in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == i %}
+                                        <a class="active" href="?page={{ i }}">{{ i }}</a>
+                                    {% else %}
+                                        <a href="?page={{ i }}">{{ i }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Shop Section End -->
+
+
+{% endblock %}

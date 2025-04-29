@@ -1,0 +1,195 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+
+Cart
+{% endblock %}
+{% block body %}
+
+
+
+
+    {% if cart|length != 0 %}
+  
+    <!-- Heading -->
+    <div data-cart="{{ cart }}"  class="bg-dark">
+      <div class="container py-4">
+        <!-- Breadcrumb -->
+        <nav class="d-flex">
+          <h6 class="mb-0">
+            <a href="{% url 'index' %}" class="text-white-50">Home</a>
+            <span class="text-white-50 mx-2"> > </span>
+            <a href="{% url 'cart' %}" class="text-white"><u>Shopping cart</u></a>
+          </h6>
+        </nav>
+        <!-- Breadcrumb -->
+      </div>
+    </div>
+    <!-- Heading -->
+  </header>
+  
+    <!-- Shopping Cart Section Begin -->
+    <section class="shopping-cart spad">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="shopping__cart__table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in cart %}
+                  <tr id="x{{ item.product.id }}{{ item.size }}{{ item.color }}" data-size="{{ item.size }}" data-color="{{ item.color }}" style="position: relative;">
+                    <td class="product__cart__item">
+                      <a href="{{ item.product.get_absolute_url }}">
+                      <div class="product__cart__item__pic">
+                        {% if item.product.customized %}
+                        {% if item.product.FrontCanva %}
+
+                        <img src="{{ item.product.FrontCanva.image.url }}" width="50px" alt="">
+                        {% else %}
+                        <img src="{{ item.product.BackCanva.image.url }}" width="50px" alt="">
+
+                        {% endif %}
+                        {% else %}
+                        <img src="{% static item.product.path %}" width="50px" alt="">
+                        {% endif %}
+                      </div>
+                      <div class="product__cart__item__text">
+                        <h6>{{ item.product.product_name }}</h6>
+                        <p>{{item.size}}</p>
+                        <p>{{item.color}}</p>
+                        <h5>Rs {{ item.product.price }}</h5>
+                      </div></a>
+                    </td>
+                    <td class="quantity__item">
+                      <div class="">
+                        <select value="{{ item.quantity }}" class="quantity-select form-select me-4" data-product-id="{{ item.product.id }}" data-size="{{ item.size }}" data-color="{{ item.color }}" style="width: 80px; border-radius: 12px;">
+                          {% for option in existing_options|dictsort:"value" %}
+                          <option value="{{ option.value }}" {% if option.value == item.quantity %}selected{% endif %}>{{ option.label }}</option>
+                          {% endfor %}
+                      </select>
+                      </div>
+                    </td>
+                    <td class="cart__price"><text id="total_price_{{ item.product.id }}_{{ item.size }}_{{ item.color }}" class="h6">Rs {{ item.total }}</text> <br />
+                    </td>
+                    <td>
+                      <div class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                        <div class="float-md-end">
+                          <a onclick="addToFavorites('{{ item.product.id }}')" href="#" class="btn btn-light border px-2 icon-hover filler" style="border-radius: 12px;"><i class="fas fa-heart fa-xs px-1 text-secondary"></i></a>
+                          <br>
+                          <br>
+                          <a href="#" onclick="removeFromCart(event, '{{ item.product.id }}', '{{ item.size }}', '{{ item.color }}' )" class="btn btn-light border text-danger icon-hover-danger" style="border-radius: 12px; padding: 4px 8px;"> <i class="fa fa-close"></i></a>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div class="border-top pt-4 mx-4 mb-4">
+              <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery for orders over Rs 500</p>
+              <p class="text-muted">
+  
+              </p>
+            </div>
+            <div class="row ">
+              <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="continue__btn">
+                  <a class="btn btn-light w-100 border mt-2" id="back-button">Continue Shopping</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="cart__discount">
+  
+  
+              <h6>Discount codes</h6>
+              <div id="main_coupon_div" class="form-group">
+                <label class="form-label">Have coupon?</label>
+    
+                  {% if user.is_authenticated %}
+                  <div class="input-group">
+                    <input id="promo_code" type="text" class="form-control border" name="promo_code" placeholder="Coupon code" />
+                    <button id="apply-promo-code" onclick="Apply_promo_function()" class="btn btn-light border">Apply</button>
+                  </div>
+                    <div id="coupon-div">
+                      {% if promocode %}
+                          <p>Coupon applied: {{ promocode }}<button id="remove-coupon-btn" title="remove code">x</button></p>
+                          
+                      {% endif %}
+                    </div>
+                    {% else %}
+                    <h5><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Create An Account</a> To Use Coupons</h5>
+                    <hr />
+                    <p>Don't Worry We Will Keep Your Cart Items And Designs :) </p>
+                    {% endif %}
+                </div>
+  
+            </div>
+            <div id="cart_summary" class="cart__total">
+              <h6>Cart total</h6>
+              <ul>
+                
+                <li>Subtotal <span id="cart_total">Rs {{ user_cart.total_price_before_discount }}</span></li>
+                <div class="d-flex justify-content-between">
+                  <p class="mb-2">Discount:</p>
+                  {% if promocode %}
+                  
+                  <p id="discount" class="mb-2 text-success">Rs {{ discount }}</p>
+                  {% else %}
+                  <p id="discount" class="mb-2 text-success">Rs 0.00</p>
+  
+                  {% endif %}
+                </div>
+                <div class="d-flex justify-content-between">
+                  <p class="mb-2">Total price:</p>
+                  {% if promocode %}
+                    <p id="cart_total_discount" class="mb-2 fw-bold">Rs {{user_cart.total_price}}</p>
+                  {% else %}
+                    <p id="cart_total_discount" class="mb-2">Rs {{user_cart.total_price_before_discount}}</p>
+                  {% endif %}
+                </div>
+              </ul>
+              <a href="{% url 'checkout' %}" class="primary-btn w-screen">Proceed to checkout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mobile-btn" style="display: none;">
+        <br>
+        <br>
+        <!-- <span>Total:</span><p id="a765lt" class="mb-2 fw-bold">  Rs {{user_cart.total_price}}</p>-->
+      <a href="{% url 'checkout' %}" class="primary-btn">Proceed to checkout</a>
+       </div>
+    </section>
+    <!-- Shopping Cart Section End -->
+    {% else %}
+    <section class="shopping-cart spad"><h5 class="text-center">Your Cart Is Empty For Now</h5>
+      <br>
+      <br>
+      <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6">
+          <div class="continue__btn">
+            <a class="btn btn-light w-100 border mt-2" id="back-button">Continue Shopping</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    {% endif %}
+
+
+  
+ 
+{% endblock %}

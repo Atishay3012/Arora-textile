@@ -1,0 +1,797 @@
+<!--CART-->
+<!-- cart + summary -->
+<section class="bg-light my-5">
+    <div class="container">
+      <div class="row">
+        <!-- cart -->
+        <div class="col-lg-9">
+          <div class="card border shadow-0">
+            <div class="m-4">
+              <h4 class="card-title mb-4">Your shopping cart</h4>
+
+              {% for item in cart %}
+
+              <div id="x{{ item.product.id }}" class="row gy-3 mb-4">
+                <div class="col-lg-5">
+                  <div class="me-lg-5">
+                    <div class="d-flex">
+                      <img src="{{ item.product.image }}" class="border rounded me-3" style="width: 50px; height: 96px;" />
+                      <div class="">
+                        <a href="{{ item.product.get_absolute_url }}" class="nav-link">{{ item.product.product_name }}</a>
+                        <p class="text-muted">{{ item.product.category }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
+                  <div class="">
+                    <select value="{{ item.quantity }}" id="quantity-select" data-product-id="{{ item.product.id }}" style="width: 100px;" class="form-select me-4">
+                        {% for option in existing_options|dictsort:"value" %}
+                        <option value="{{ option.value }}" {% if option.value == item.quantity %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                    </select>
+                  </div>
+                  <div class="">
+                    <text id="total_price_{{ item.product.id }}" class="h6">Rs {{ item.total }}</text> <br />
+                    <small class="text-muted text-nowrap"> Rs {{ item.product.price }} / per item </small>
+                  </div>
+                </div>
+                <div class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                  <div class="float-md-end">
+                    <a href="#!" class="btn btn-light border px-2 icon-hover-primary"><i class="fas fa-heart fa-lg px-1 text-secondary"></i></a>
+                    <a onclick="removeFromCart('{{ item.product.id }}')" class="btn btn-light border text-danger icon-hover-danger"> Remove</a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+              
+
+            </div>
+  
+            <div class="border-top pt-4 mx-4 mb-4">
+              <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery for orders over Rs 1000</p>
+              <p class="text-muted">
+
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- cart -->
+        <!-- summary -->
+        {% if cart %}
+        <div data-cart="{{ cart }}" id="cart_summary" class="col-lg-3">
+          <div class="card mb-3 border shadow-0">
+            <div class="card-body">
+              
+                <div id="main_coupon_div" class="form-group">
+                  <label class="form-label">Have coupon?</label>
+                  {% if user.is_authenticated %}
+                  <div class="input-group">
+                    <input id="promo_code" type="text" class="form-control border" name="promo_code" placeholder="Coupon code" />
+                    <button id="apply-promo-code" onclick="Apply_promo_function()" class="btn btn-light border">Apply</button>
+                  </div>
+                    <div id="coupon-div">
+                      {% if promocode %}
+                          <p>Coupon applied: {{ promocode }}<button id="remove-coupon-btn" title="remove code">x</button></p>
+                          
+                      {% endif %}
+                    </div>
+                    {% else %}
+                    <h5><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Create An Account</a> To Use Coupons</h5>
+                    <hr />
+                    <p>Don't Worry We Will Keep Your Cart And Designs :) </p>
+                    {% endif %}
+                </div>
+              
+            </div>
+          </div>
+          <div class="card shadow-0 border">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <p class="mb-2">Total price:</p>
+                <p id="cart_total" class="mb-2">Rs {{user_cart.total_price_before_discount}}</p>
+              </div>
+              <div class="d-flex justify-content-between">
+                <p class="mb-2">Discount:</p>
+                {% if promocode %}
+                
+                <p id="discount" class="mb-2 text-success">Rs {{ discount }}</p>
+                {% else %}
+                <p id="discount" class="mb-2 text-success">Rs 0.00</p>
+
+                {% endif %}
+              </div>
+              <hr />
+              <div class="d-flex justify-content-between">
+                <p class="mb-2">Total price:</p>
+                {% if promocode %}
+                  <p id="cart_total_discount" class="mb-2 fw-bold">Rs {{user_cart.total_price}}</p>
+                {% else %}
+                  <p id="cart_total_discount" class="mb-2">Rs {{user_cart.total_price_before_discount}}</p>
+                {% endif %}
+              </div>
+  
+              <div class="mt-3">
+                <a href="{% url 'checkout' %}"  class="btn btn-success w-100 shadow-0 mb-2"> Checkout Now </a>
+                <a  id="back-button" class="btn btn-light w-100 border mt-2"> Back to shop </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- summary -->
+      </div>
+    </div>
+  </section>
+  {% endif %}
+  <!-- cart + summary -->
+<!--CART-->
+<!--layout-->
+<ul class="dropdown">
+  <li><a href="./about.html">About Us</a></li>
+  <li><a href="./shop-details.html">Shop Details</a></li>
+  {% if request.path == '/cart/' %}
+  <li class="nav-item active">
+  {% else %}
+  <li class="nav-item">
+  {% endif %}
+      <a class="nav-link" href="{% url 'cart' %}">Cart ({{ cart_count }})</a>
+  </li>
+  <li><a href="./checkout.html">Check Out</a></li>
+  <li><a href="./blog-details.html">Blog Details</a></li>
+</ul>
+<!--Category size draft-->
+$('.shop__sidebar__size input[type="checkbox"]').on('change', function(e) {
+  // Add or remove the active class
+  if ($(this).is(':checked')) {
+    $(this).closest('label').addClass('active');
+  } else {
+    $(this).closest('label').removeClass('active');
+  }
+
+  // Get the selected sizes
+  var selectedSizes = $('.shop__sidebar__size input[type="checkbox"]:checked').map(function() {
+    return $(this).attr('id').toUpperCase();
+  }).get();
+
+  // Filter the products by size
+  $('.product__item').each(function() {
+    var size = $(this).data('size');
+    if (selectedSizes.includes(size)) {
+      $(this).show();
+    } else {
+      $(this).hide();
+    }
+  });
+});
+<div class="container">
+  <h1>Your Cart</h1>
+  <table class="table">
+      <thead>
+          <tr>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Total</th>
+          </tr>
+      </thead>
+      <tbody>
+          
+          {% for item in cart %}
+              <tr>
+                  <td>{{ item.product.product_name }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>${{ item.product.price }}</td>
+
+                  <td>${{ item.total }}</td>
+                  <td><button onclick="removeFromCart(1)">Remove</button></td>
+              </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+  <p>Total: ${{ user_cart.total_price }}</p>
+  <a href="{% url 'checkout' %}" class="btn btn-primary">Checkout</a>
+
+  <div class="d-flex align-items-center mb-4">
+    <div class="me-3 position-relative">
+
+      <img src="{{item.product.image}}" style="height: 96px; width: 96x;" class="img-sm rounded border" />
+    </div>
+    <div class="">
+      <a href="#" class="nav-link">
+        {{ item.product.product_name }} <br />
+        
+      </a>
+      <div class="price text-muted"> Rs {{item.product.price}}</div>
+    </div>
+  </div>
+  <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1" />
+    <label class="form-check-label" for="flexCheckDefault1">Save this address</label>
+  </div>
+
+  <div class="mb-3">
+    <p class="mb-0">Message to seller</p>
+    <div class="form-outline">
+      <textarea class="form-control" id="textAreaExample1" rows="2"></textarea>
+    </div>
+  </div>
+
+  <div class="float-end">
+    <button class="btn btn-light border">Cancel</button>
+    <button class="btn btn-success shadow-0 border">Continue</button>
+  </div>
+</div>
+</div>
+</form>
+<!-- Checkout -->
+</div>
+<div class="col-xl-4 col-lg-4 d-flex justify-content-center justify-content-lg-end">
+<div class="ms-lg-4 mt-4 mt-lg-0" style="max-width: 320px;">
+<h6 class="mb-3">Summary</h6>
+<div class="d-flex justify-content-between">
+  <p class="mb-2">Sub Total:</p>
+  <p class="mb-2">Rs {{user_cart.total_price_before_discount}}</p>
+</div>
+<div class="d-flex justify-content-between">
+  <p class="mb-2">Discount:</p>
+  <p class="mb-2 text-danger">- Rs {{user_cart.discount}}</p>
+</div>
+<div class="d-flex justify-content-between">
+  <p class="mb-2">Shipping cost:</p>
+  {% if user_cart.shipping_cost == 0 %}
+  <p class="mb-2">Free Shipping</p>
+  {% else %}
+  <p class="mb-2">+ Rs {{user_cart.shipping_cost}}</p>
+  {% endif %}
+</div>
+<hr />
+{% if user_cart.shipping_cost != 0 %}
+<div class="free-shipping">
+  Add items worth Rs {{ user_cart.shipping_remainder }} or  more to your cart and get free shipping!
+</div>
+<hr />
+{% endif %}
+<div class="d-flex justify-content-between">
+  <p class="mb-2">Total price:</p>
+  <p class="mb-2 fw-bold">Rs {{user_cart.final_price}}</p>
+</div>
+
+<div class="input-group mt-3 mb-4">
+  <input type="text" class="form-control border" name="" placeholder="Promo code" />
+  <button class="btn btn-light text-primary border">Apply</button>
+</div>
+
+<hr />
+<h6 class="text-dark my-4">Items in cart</h6>
+{% for item in cart %}
+<div class="d-flex align-items-center mb-4">
+  <div class="me-3 position-relative">
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-secondary">
+      {{item.quantity}}
+    </span>
+    <img src="{{item.product.image}}" style="height: 96px; width: 96x;" class="img-sm rounded border" />
+  </div>
+  <div class="">
+    <a href="#" class="nav-link">
+      {{ item.product.product_name }} <br />
+      
+    </a>
+    <div class="price text-muted"> Rs {{item.product.price}}</div>
+  </div>
+</div>
+{% endfor %}
+     
+          <!-- Checkout -->
+
+          <form method="POST" action="{% url 'checkout' %}">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="first_name">First Name</label>
+              <input type="text" class="form-control" id="first_name" name="first_name" required>
+          </div>
+          <div class="form-group">
+              <label for="last_name">Last Name</label>
+              <input type="text" class="form-control" id="last_name" name="last_name" required>
+          </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+
+    
+                    <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+               
+            </div>
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" class="form-control" id="country" name="country" value="{{ user.country }}" required>
+            </div>
+            <div class="form-group">
+                <label for="street_name">Street Name</label>
+                <input type="text" class="form-control" id="street_name" name="street_name" required>
+            </div>
+            <div class="form-group">
+                <label for="building">Building</label>
+                <input type="text" class="form-control" id="building" name="building" required>
+            </div>
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" class="form-control" id="city" name="city" required>
+          </div>
+          <div class="form-group">
+              <label for="governorate">Governorate</label>
+              <input type="text" class="form-control" id="governorate" name="governorate" required>
+          </div>
+          <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="text" class="form-control" id="phone" name="phone" required>
+          </div>
+          <div class="form-group">
+              <label for="Nearest_landmark">Nearest Landmark</label>
+              <input type="text" class="form-control" id="Nearest_landmark" name="Nearest_landmark">
+          </div>
+          <div class="form-group">
+            <label for="payment_method">Payment Method</label>
+            <select class="form-control" id="payment_method" name="payment_method" required>
+                <option value="">--Select Payment Method--</option>
+                <option value="CC">Credit Card</option>
+                <option value="VS">Visa</option>
+                <option value="MC">Master Card</option>
+                <option value="COD">Cash On Delivery</option>
+                <option value="VF">Vodafone</option>
+                <option value="OG">Orange</option>
+                <option value="WE">Wepay</option>
+                <option value="PP">Paypal</option>
+                <option value="BT">Bank Transfer</option>
+            </select>
+        </div>
+
+          <button type="submit">Submit</button>
+          </form>
+
+
+</div>
+</div>
+</div>
+</div>
+</section>
+
+
+<div class="size-selector">
+  <h3>Choose a size:</h3>
+  <button>S</button>
+  <button>M</button>
+  <button>L</button>
+  <button>XL</button>
+  <button>XXL</button>
+</div>
+<script>
+
+
+  const addToCartBtn = document.querySelector('.add-to-cart-btn');
+  const sizeSelector = document.querySelector('.size-selector');
+  
+  addToCartBtn.addEventListener('click', () => {
+    sizeSelector.classList.add('size-selector--active');
+  });
+  </script>
+
+<section>
+  <div class="container my-5">
+    <header class="mb-4">
+      <h3>Recommended items</h3>
+    </header>
+
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card px-4 border shadow-0 mb-4 mb-lg-0">
+          <div class="mask px-2" style="height: 50px;">
+            <div class="d-flex justify-content-between">
+              <h6><span class="badge bg-danger pt-1 mt-3 ms-2">New</span></h6>
+              <a href="#"><i class="fas fa-heart text-primary fa-lg float-end pt-3 m-2"></i></a>
+            </div>
+          </div>
+          <a href="#" class="">
+            <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/7.webp" class="card-img-top rounded-2" />
+          </a>
+          <div class="card-body d-flex flex-column pt-3 border-top">
+            <a href="#" class="nav-link">Gaming Headset with Mic</a>
+            <div class="price-wrap mb-2">
+              <strong class="">$18.95</strong>
+              <del class="">$24.99</del>
+            </div>
+            <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
+              <a href="#" class="btn btn-outline-primary w-100">Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card px-4 border shadow-0 mb-4 mb-lg-0">
+          <div class="mask px-2" style="height: 50px;">
+            <a href="#"><i class="fas fa-heart text-primary fa-lg float-end pt-3 m-2"></i></a>
+          </div>
+          <a href="#" class="">
+            <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/5.webp" class="card-img-top rounded-2" />
+          </a>
+          <div class="card-body d-flex flex-column pt-3 border-top">
+            <a href="#" class="nav-link">Apple Watch Series 1 Sport </a>
+            <div class="price-wrap mb-2">
+              <strong class="">$120.00</strong>
+            </div>
+            <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
+              <a href="#" class="btn btn-outline-primary w-100">Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card px-4 border shadow-0">
+          <div class="mask px-2" style="height: 50px;">
+            <a href="#"><i class="fas fa-heart text-primary fa-lg float-end pt-3 m-2"></i></a>
+          </div>
+          <a href="#" class="">
+            <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/9.webp" class="card-img-top rounded-2" />
+          </a>
+          <div class="card-body d-flex flex-column pt-3 border-top">
+            <a href="#" class="nav-link">Men's Denim Jeans Shorts</a>
+            <div class="price-wrap mb-2">
+              <strong class="">$80.50</strong>
+            </div>
+            <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
+              <a href="#" class="btn btn-outline-primary w-100">Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card px-4 border shadow-0">
+          <div class="mask px-2" style="height: 50px;">
+            <a href="#"><i class="fas fa-heart text-primary fa-lg float-end pt-3 m-2"></i></a>
+          </div>
+          <a href="#" class="">
+            <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/10.webp" class="card-img-top rounded-2" />
+          </a>
+          <div class="card-body d-flex flex-column pt-3 border-top">
+            <a href="#" class="nav-link">Mens T-shirt Cotton Base Layer Slim fit </a>
+            <div class="price-wrap mb-2">
+              <strong class="">$13.90</strong>
+            </div>
+            <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
+              <a href="#" class="btn btn-outline-primary w-100">Add to cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+@csrf_exempt
+
+def toggle_night_mode(request, mode):
+    if request.method == 'PUT':
+        if mode == 'True':
+            request.session['darkmode'] = True
+        else:
+            request.session['darkmode'] = False
+        return JsonResponse({'night_mode':  request.session.get('darkmode')})
+    else:
+        night_mode = request.session.get('darkmode')
+        
+        return JsonResponse({'night_mode':  night_mode})
+
+<a id="night-mode-toggle"><i class="fas fa-moon"></i> Dark Mode</a>
+    <!-- Use the block body tag to insert the content of each page -->
+    <script>
+
+
+
+
+      var night_mode;
+      const body = document.querySelector('body');
+
+      document.addEventListener("DOMContentLoaded", function() {
+
+          fetch('/toggle-night-mode/False')
+              .then(response => response.json())
+              .then(data => {
+                  // Print email
+                  console.log(data);
+                  night_mode = data.night_mode;
+                  console.log(night_mode);
+                  // ... do something else with email ...
+                  if (night_mode === true) {
+                      
+                      body.classList.add('night-mode');
+                      nightModeToggle.innerHTML = `<i class="fas fa-sun"></i> Light Mode`;
+                  }
+                  else {
+                      nightModeToggle.innerHTML = `<i class="fas fa-moon"></i> Dark Mode`;
+                      body.classList.remove('night-mode');
+  
+                  }
+              });
+
+});
+
+      const nightModeToggle = document.querySelector('#night-mode-toggle');
+      nightModeToggle.addEventListener('click', () => {
+
+          
+
+
+          if (nightModeToggle.innerHTML.includes("Dark Mode")) {
+              nightModeToggle.innerHTML = `<i class="fas fa-sun"></i> Light Mode`;
+              fetch('/toggle-night-mode/True', {
+                  method: 'PUT',
+
+                  })
+                  
+                  body.classList.add('night-mode');
+              }
+              else {
+              fetch('/toggle-night-mode/False', {
+                  method: 'PUT',
+
+                  })
+              nightModeToggle.innerHTML = `<i class="fas fa-moon"></i> Dark Mode`;
+              
+              body.classList.remove('night-mode');
+              }
+      
+      
+      });
+  </script>
+      path('toggle-night-mode/<str:mode>', views.toggle_night_mode, name='toggle_night_mode'),
+
+      <script>
+        $('.shop__sidebar__price a').on('click', function(e) {
+      e.preventDefault();
+    
+      // Get the minimum and maximum price from the link text
+      var priceRange = $(this).text().split(' - ');
+      var minPrice = parseFloat(priceRange[0].replace('$', ''));
+      var maxPrice = parseFloat(priceRange[1].replace('$', ''));
+    
+      // Filter the products by price
+      $('.product__item').each(function() {
+        var price = parseFloat($(this).data('price'));
+        if (price >= minPrice && price <= maxPrice) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+    });
+    
+    $('.shop__sidebar__size input[type="checkbox"]').on('change', function(e) {
+      // Add or remove the active class
+      if ($(this).is(':checked')) {
+        $(this).closest('label').addClass('active');
+      } else {
+        $(this).closest('label').removeClass('active');
+      }
+    });
+    
+    // Sort by price
+    $('.sort-by-price').on('click', function(e) {
+      e.preventDefault();
+     console.log("hello");
+      // Get the selected sort order
+      var sortOrder = $(this).data('sort-order');
+    
+      // Sort the products by price
+      $('.product__item').sort(function(a, b) {
+        var priceA = parseFloat($(a).data('price'));
+        var priceB = parseFloat($(b).data('price'));
+        if (sortOrder === 'asc') {
+          return priceA - priceB;
+        } else {
+          return priceB - priceA;
+        }
+      }).appendTo('.product__list');
+    });
+    
+    </script>
+
+
+
+
+
+
+
+checkout <div id="        <div id="main_coupon_div" class="col-lg-8 col-md-6">
+          <h6 class="coupon__code"><span class="icon_tag_alt"></span> Have a coupon? <div class="input-group mt-3 mb-4">
+              {% if user.is_authenticated %}
+              <div class="input-group">
+                <input id="promo_code" type="text" class="form-control border" name="promo_code"
+                  placeholder="Coupon code" />
+                <button id="apply-promo-code" onclick="Apply_promo_function()"
+                  class="btn btn-light border">Apply</button>
+              </div>
+              <div id="coupon-div">
+                {% if promocode %}
+                <p>Coupon applied: {{ promocode }}<button id="remove-coupon-btn" title="remove code">x</button></p>
+
+                {% endif %}
+              </div>
+              {% else %}
+              <h5><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Create An Account</a> To Use
+                Coupons</h5>
+              <hr />
+              <p>Don't Worry We Will Keep Your Cart Items And Designs :) </p>
+              {% endif %}
+        </div>" class="carousel slide" data-bs-ride="carousel">
+  <ol class="carousel-indicators">
+    <li data-bs-target="#        <div id="main_coupon_div" class="col-lg-8 col-md-6">
+          <h6 class="coupon__code"><span class="icon_tag_alt"></span> Have a coupon? <div class="input-group mt-3 mb-4">
+              {% if user.is_authenticated %}
+              <div class="input-group">
+                <input id="promo_code" type="text" class="form-control border" name="promo_code"
+                  placeholder="Coupon code" />
+                <button id="apply-promo-code" onclick="Apply_promo_function()"
+                  class="btn btn-light border">Apply</button>
+              </div>
+              <div id="coupon-div">
+                {% if promocode %}
+                <p>Coupon applied: {{ promocode }}<button id="remove-coupon-btn" title="remove code">x</button></p>
+
+                {% endif %}
+              </div>
+              {% else %}
+              <h5><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Create An Account</a> To Use
+                Coupons</h5>
+              <hr />
+              <p>Don't Worry We Will Keep Your Cart Items And Designs :) </p>
+              {% endif %}
+        </div>" data-bs-slide-to="0" class="active" aria-current="true" aria-label="First slide"></li>
+    <li data-bs-target="#        <div id="main_coupon_div" class="col-lg-8 col-md-6">
+          <h6 class="coupon__code"><span class="icon_tag_alt"></span> Have a coupon? <div class="input-group mt-3 mb-4">
+              {% if user.is_authenticated %}
+              <div class="input-group">
+                <input id="promo_code" type="text" class="form-control border" name="promo_code"
+                  placeholder="Coupon code" />
+                <button id="apply-promo-code" onclick="Apply_promo_function()"
+                  class="btn btn-light border">Apply</button>
+              </div>
+              <div id="coupon-div">
+                {% if promocode %}
+                <p>Coupon applied: {{ promocode }}<button id="remove-coupon-btn" title="remove code">x</button></p>
+
+                {% endif %}
+              </div>
+              {% else %}
+              <h5><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Create An Account</a> To Use
+                Coupons</h5>
+              <hr />
+              <p>Don't Worry We Will Keep Your Cart Items And Designs :) </p>
+              {% endif %}
+        </div>" data-bs-slide-to="1" aria-label="Second slide"></li>
+    <li data-bs-target="#        <div id="main_coupon_div" class="col-lg-8 col-md-6">
+          <h6 class="coupon__code"><span class="icon_tag_alt"></span> Have a coupon? <div class="input-group mt-3 mb-4">
+              {% if user.is_authenticated %}
+              <div class="input-group">
+                <input id="promo_code" type="text" class="form-control border" name="promo_code"
+                  placeholder="Coupon code" />
+                <button id="apply-promo-code" onclick="Apply_promo_function()"
+                  class="btn btn-light border">Apply</button>
+              </div>
+              <div id="coupon-div">
+                {% if promocode %}
+                <p>Coupon applied: {{ promocode }}<button id="remove-coupon-btn" title="remove code">x</button></p>
+
+                {% endif %}
+              </div>
+              {% else %}
+              <h5><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Create An Account</a> To Use
+                Coupons</h5>
+              <hr />
+              <p>Don't Worry We Will Keep Your Cart Items And Designs :) </p>
+              {% endif %}
+        </div>" data-bs-slide-to="2" aria-label="Third slide"></li>
+  </ol>
+  <div class="carousel-inner" role="listbox">
+    <div class="carousel-item active">
+      <img src="holder.js/900x500/auto/#777:#555/text:First slide" class="w-100 d-block" alt="First slide">
+      <div class="carousel-caption d-none d-md-block">
+        <h3>Title</h3>
+        <p>Description</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="holder.js/900x500/auto/#666:#444/text:Second slide" class="w-100 d-block" alt="Second slide">
+      <div class="carousel-caption d-none d-md-block">
+        <h3>Title</h3>
+        <p>Description</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="holder.js/900x500/auto/#666:#444/text:Third slide" class="w-100 d-block" alt="Third slide">
+      <div class="carousel-caption d-none d-md-block">
+        <h3>Title</h3>
+        <p>Description</p>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#        <div id="main_coupon_div" class="col-lg-8 col-md-6">
+          <h6 class="coupon__code"><span class="icon_tag_alt"></span> Have a coupon? <div class="input-group mt-3 mb-4">
+              {% if user.is_authenticated %}
+              <div class="input-group">
+                <input id="promo_code" type="text" class="form-control border" name="promo_code"
+                  placeholder="Coupon code" />
+                <button id="apply-promo-code" onclick="Apply_promo_function()"
+                  class="btn btn-light border">Apply</button>
+              </div>
+              <div id="coupon-div">
+                {% if promocode %}
+                <p>Coupon applied: {{ promocode }}<button id="remove-coupon-btn" title="remove code">x</button></p>
+
+                {% endif %}
+              </div>
+              {% else %}
+              <h5><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Create An Account</a> To Use
+                Coupons</h5>
+              <hr />
+              <p>Don't Worry We Will Keep Your Cart Items And Designs :) </p>
+              {% endif %}
+        </div>" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#        <div id="main_coupon_div" class="col-lg-8 col-md-6">
+          <h6 class="coupon__code"><span class="icon_tag_alt"></span> Have a coupon? <div class="input-group mt-3 mb-4">
+              {% if user.is_authenticated %}
+              <div class="input-group">
+                <input id="promo_code" type="text" class="form-control border" name="promo_code"
+                  placeholder="Coupon code" />
+                <button id="apply-promo-code" onclick="Apply_promo_function()"
+                  class="btn btn-light border">Apply</button>
+              </div>
+              <div id="coupon-div">
+                {% if promocode %}
+                <p>Coupon applied: {{ promocode }}<button id="remove-coupon-btn" title="remove code">x</button></p>
+
+                {% endif %}
+              </div>
+              {% else %}
+              <h5><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Create An Account</a> To Use
+                Coupons</h5>
+              <hr />
+              <p>Don't Worry We Will Keep Your Cart Items And Designs :) </p>
+              {% endif %}
+        </div>" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+
+
+<a href="#" class="search-switch"><img src="{% static 'frontend/img/icon/search.png' %}" alt=""></a>
+
+
+<div class="card">
+  <div class="card-heading">
+      <a data-toggle="collapse" data-target="#collapseThree">Filter Price</a>
+  </div>
+  <div id="collapseThree" class="collapse show" data-parent="#accordionExample">
+      <div class="card-body">
+          <div class="shop__sidebar__price">
+              <ul>
+                  <button class="sort-by-price" data-sort-order="asc">Low to High</button>
+                  <button class="sort-by-price" data-sort-order="desc">High to Low</button>
+                  <li><a href="#" class="sort-by-price" data-sort-order="asc">Low to High</a></li>
+                  <li><a href="#">Rs 0.00 - Rs 50.00</a></li>
+                  <li><a href="#">Rs 50.00 - Rs 100.00</a></li>
+                  <li><a href="#">Rs 100.00 - Rs 150.00</a></li>
+                  <li><a href="#">Rs 150.00 - Rs 200.00</a></li>
+                  <li><a href="#">Rs 200.00 - Rs 250.00</a></li>
+                  <li><a href="#">Rs 250.00+</a></li>
+                  <li><a href="#" class="sort-by-price" data-sort-order="desc">High to Low</a></li>
+                </ul>
+          </div>
+      </div>
+  </div>
+</div>

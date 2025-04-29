@@ -1,0 +1,188 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}
+
+Register
+{% endblock %}
+{% block body %}
+
+    <style>
+        #body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        #body {
+            width: 400px;
+            margin: 100px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333333;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #0099ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        a {
+            color: #0099ff;
+        }
+        .google-btn {
+        display: inline-block;
+        background-color: #4285f4;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-family: Arial, sans-serif;
+        text-decoration: none;
+        }
+
+        .google-btn:hover {
+            background-color: #357ae8;
+        }
+        
+        </style>
+
+    <style>
+
+
+        h1 {
+            text-align: center;
+            color: #333333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: blue;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        p {
+            text-align: center;
+        }
+        a {
+            color: blue;
+        }
+        .google-btn {
+    display: inline-block;
+    width: 100%;
+    background-color: #4285f4;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-family: Arial, sans-serif;
+    text-decoration: none;
+    text-align: center;
+    }
+
+    .google-btn:hover {
+        color: black;
+        background-color: #357ae8;
+    }
+
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type=text], input[type=email], input[type=password], input[type=tel] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #f2f2f2;
+}
+
+button[type=submit] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button[type=submit]:hover {
+  background-color: #45a049;
+}
+
+    </style>
+    <h1>Register</h1>
+    <div class="container col-12" id="body">
+        <form method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+          <div class="form-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" required>
+          </div>
+          <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+          </div>
+          <div class="form-group">
+            <label for="phone_number">Phone Number:</label>
+            <input placeholder="(eg.) +201055981447" type="tel" id="phone_number" name="phone_number" required>
+          </div>
+          <button type="submit">Register</button>
+          <!--
+          <hr/>
+          <a href="http://www.Arora-Textiles.com/accounts/google/login/?process=login" class="google-btn">Sign Up using Google</a>-->
+        </form>
+        <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+      </div>
+      
+      
+
+  
+{% endblock %}

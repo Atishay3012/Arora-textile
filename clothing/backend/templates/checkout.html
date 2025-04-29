@@ -1,0 +1,256 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}
+Checkout
+{% endblock %}
+{% block head %}
+{{ block.super }}
+<!-- Add Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- Add custom CSS -->
+<style>
+  body {
+    padding-top: 50px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: inline-block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<!-- Breadcrumb Section Begin -->
+<div class="bg-dark">
+  <div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav class="d-flex">
+      <h6 class="mb-0">
+        <a href="{% url 'index' %}" class="text-white-50">Home</a>
+        <span class="text-white-50 mx-2"> > </span>
+        <a href="{% url 'cart' %}" class="text-white-50">Cart</a>
+        <span class="text-white-50 mx-2"> > </span>
+        <a href="{% url 'checkout' %}" class="text-white"><u>Checkout</u></a>
+
+      </h6>
+    </nav>
+    <!-- Breadcrumb -->
+  </div>
+</div>
+<!-- Breadcrumb Section End -->
+
+
+
+
+<!-- Checkout Section Begin -->
+<section class="checkout spad">
+  <div class="container">
+    <div class="checkout__form">
+      <div class="row">
+        <div id="main_coupon_div" class="col-lg-8 col-md-6">
+
+          </h6>
+          <form action="{% url 'checkout'%}" method="post">
+            {% csrf_token %}
+            <h6 class="checkout__title">Billing Details</h6>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="checkout__input">
+                  <p>First Name<span>*</span></p>
+                  <input class="form-control" required name="first_name" value="{{ user.first_name}}" type="text">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="checkout__input">
+                  <p>Last Name<span>*</span></p>
+                  <input class="form-control" required name="last_name" value="{{ user.last_name}}" type="text">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="checkout__input">
+                  <p>Phone<span>*</span></p>
+                  <input class="form-control" required name="phone" value="{{ user.phone }}" type="text">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="checkout__input">
+                  <p>Email<span>*</span></p>
+                  <input class="form-control" required name="email" value="{{ user.email }}" type="text">
+                </div>
+              </div>
+            </div>
+            <div class="checkout__input">
+              <p>Address<span>*</span></p>
+              <input class="form-control" required name="address" type="text" placeholder="Street Address" value="{{ address }}"
+                class="checkout__input__add">
+              <input class="form-control" type="text" placeholder="Apartment, suite, unite ect (optional)">
+            </div>
+            <div class="checkout__input">
+              <p>Governorate<span>*</span></p>
+              <select class="form-control" required name="governorate">
+                <option selected disabled value="">--Please choose an option--</option>
+                {% for value, name in governorates %}
+                  <option value="{{ value }}" {% if last_governorate == value %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="checkout__input">
+              <p>City<span>*</span></p>
+              <input placeholder="eg. Maadi" class="form-control" required name="city" type="text" value="{{ city }}">
+            </div>
+
+            <div class="checkout__input">
+              <p>Order notes<span></span></p>
+              <input class="form-control" type="text"
+                placeholder="Notes about your order, e.g. special notes for delivery.">
+            </div>
+            <div style="font-size: 1.25rem;" class="form-group border rounded p-3 position-relative">
+              <label>Payment Method:</label>
+              <div class="form-check">
+                <input required class="form-check-input" type="radio" name="payment_method" id="vodafoneCash"
+                  value="VF">
+                <label class="form-check-label d-flex align-items-center" for="vodafoneCash">
+                  <img src="{% static 'frontend/img/pay/Gpay.jpg'%}" width="20px" alt="Google Pay" class="mr-2">
+                  Google Pay
+                </label>
+                <small class="form-text text-muted d-none">You will be contacted by a sales representative to confirm
+                  payment.</small>
+              </div>
+              <br>
+              <div class="form-check">
+                <input required class="form-check-input" type="radio" name="payment_method" id="wePay" value="WE">
+                <label class="form-check-label d-flex align-items-center" for="wePay">
+                  <img src="{% static 'frontend/img/pay/PhonePe.png'%}" width="20px" alt="Phone Pay" class="mr-2">
+                  Phone Pay
+                </label>
+                <small class="form-text text-muted d-none">You will be contacted by a sales representative to confirm
+                  payment.</small>
+              </div>
+              <br>
+              <div class="form-check">
+                <input required class="form-check-input" type="radio" name="payment_method" id="cashOnDelivery"
+                  value="COD">
+                <label class="form-check-label d-flex align-items-center" for="cashOnDelivery">
+                  <img src="{% static 'frontend/img/pay/cod.png'%}" width="20px" alt="Cash On Delivery" class="mr-2">
+                  Cash On Delivery
+                </label>
+                <small class="form-text text-muted d-none">COD fees of Rs 12 will be applied.</small>
+              </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="col-lg-4 col-md-6">
+          <div class="checkout__order">
+            <h4 class="order__title">Your order</h4>
+            <div class="checkout__order__products">Product <span>Total</span></div>
+            <ul class="checkout__total__products">
+              {% for item in cart %}
+              <li>
+                <span class="translate-middle badge rounded-pill badge-light float-left">{{item.quantity}} </span>
+                . {{ item.product.product_name }}
+                <span>Rs {{item.total}}</span>
+              </li>
+              {% endfor %}
+
+            </ul>
+            <ul class="checkout__total__all">
+              <div class="final-cart">
+                <li>Subtotal <span>Rs {{user_cart.total_price_before_discount}}</span></li>
+                <div class="d-flex justify-content-between">
+                  <p class="mb-2">Discount:</p>
+                  <p id="discount" class="mb-2 text-danger">- Rs {{user_cart.discount}}</p>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <p class="mb-2">Shipping cost:</p>
+                  
+                  {% if user_cart.shipping_cost == 0 %}
+                  <p class="mb-2">Free Shipping</p>
+                  {% else %}
+                  <p class="mb-2">+ Rs {{user_cart.shipping_cost}}</p>
+                  {% endif %}
+                </div>
+              </div>
+              <hr />
+              {% if user_cart.shipping_cost != 0 %}
+              <div class="free-shipping">
+                Add items worth Rs {{ user_cart.shipping_remainder }} or more to your cart and get free shipping!
+              </div>
+              <hr />
+              {% endif %}
+              <li>Total <span id="cart_total_discount">Rs {{user_cart.final_price}}</span></li>
+            </ul>
+
+
+            <button type="submit" class="site-btn">PLACE ORDER</button>
+          </div>
+        </div>
+      </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  const payment_methodInputs = document.querySelectorAll('input[name=payment_method]');
+  const finalCart = document.querySelector('.final-cart');
+  let codFeesApplied = false;
+
+  payment_methodInputs.forEach(input => {
+    input.addEventListener('change', event => {
+      const formTexts = document.querySelectorAll('.form-text');
+      formTexts.forEach(formText => {
+        formText.classList.add('d-none');
+      });
+
+      const formCheck = event.target.closest('.form-check');
+      const formText = formCheck.querySelector('.form-text');
+      formText.classList.remove('d-none');
+
+      if (event.target.value === 'COD') {
+        const codFeesDiv = document.createElement('div');
+        codFeesDiv.classList.add('d-flex', 'justify-content-between', 'cod-fees');
+        codFeesDiv.innerHTML = `
+              <p class="mb-2">COD fees:</p>
+              <p class="mb-2">+ Rs 12</p>
+            `;
+        finalCart.appendChild(codFeesDiv);
+
+        const cartTotalDiscount = document.querySelector('#cart_total_discount');
+        const cartTotalDiscountValue = parseFloat(cartTotalDiscount.textContent.replace('Rs ', ''));
+        cartTotalDiscount.textContent = `Rs ${(cartTotalDiscountValue + 12).toFixed(2)}`;
+
+        codFeesApplied = true;
+      } else if (codFeesApplied) {
+        const codFeesDiv = finalCart.querySelector('.cod-fees');
+        if (codFeesDiv) {
+          codFeesDiv.remove();
+        }
+
+        const cartTotalDiscount = document.querySelector('#cart_total_discount');
+        const cartTotalDiscountValue = parseFloat(cartTotalDiscount.textContent.replace('Rs ', ''));
+        cartTotalDiscount.textContent = `Rs ${(cartTotalDiscountValue - 12).toFixed(2)}`;
+
+        codFeesApplied = false;
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+
+{% endblock %}

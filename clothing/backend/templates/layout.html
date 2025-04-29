@@ -1,0 +1,311 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+
+        <meta charset="UTF-8">
+        <script>document.getElementsByTagName("html")[0].className += " js";</script>
+        <title>{% block title %}Aroratextiles Clothing Store - Buy Clothes and T-Shirts in India{% endblock %}</title>
+        <!-- Use a CDN link for Bootstrap instead of a static file -->
+        <link rel="stylesheet" href="{% static 'frontend/assets/css/style.css' %}">
+    
+
+
+        <link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
+        <!-- Use a CDN link for jQuery instead of a static file -->
+        <!-- Use a CDN link for Bootstrap instead of a static file -->
+        
+        <link rel="icon" href="{% static 'frontend/img/banner/logo.jpg'%}" alt="Aroratextiles Clothing Store Logo" type="image/x-icon">
+    
+        <meta name="author" content="Momen Medhat">
+        <meta name="keywords" content="Aroratextiles, Arora Textiles, Aroratextiles clothes, clothing, t shirts, Aroratextiles clothing, Clothes India">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+        <!-- Add descriptive URLs for your pages -->
+        <link rel="canonical" href="https://www.Arora-Textiles.com">
+    
+        <!-- Add descriptive titles and meta descriptions -->
+   
+        <meta name="description" content="Shop the latest fashion trends at Aroratextiles Clothing Store. We offer a wide range of clothes and t-shirts for men and women in India.">
+
+        <!-- Google Font -->
+        <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+        <!--Styles-->
+        <link rel="stylesheet" href="{% static 'frontend/css/bootstrap.min.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'frontend/css/font-awesome.min.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'frontend/css/elegant-icons.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'frontend/css/magnific-popup.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'frontend/css/nice-select.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'frontend/css/owl.carousel.min.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'frontend/css/slicknav.min.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'frontend/css/style.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'frontend/style.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'frontend/css/query.css' %}" type="text/css">
+
+
+        
+        <!--Scripts-->
+        <!-- Js Plugins -->
+        
+        
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        {% block script %}
+        
+
+        <script src="{% static 'frontend/assets/js/util.js' %}"></script> <!-- util functions included in the CodyHouse framework -->
+        <script src="{% static 'frontend/assets/js/main.js' %}"></script> 
+
+        <script src="{% static 'frontend/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'frontend/js/jquery.nice-select.min.js' %}"></script>
+        <script src="{% static 'frontend/js/jquery.nicescroll.min.js' %} "></script>
+        <script src="{% static 'frontend/js/jquery.magnific-popup.min.js'%}"></script>
+        <script src="{% static 'frontend/js/jquery.countdown.min.js' %}"></script>
+        <script src="{% static 'frontend/js/jquery.slicknav.js' %}"></script>
+        <script src="{% static 'frontend/js/mixitup.min.js' %}"></script>
+        <script src="{% static 'frontend/js/owl.carousel.min.js' %}"></script>
+        <script src="{% static 'frontend/js/main.js' %}"></script>
+        <script src="{% static 'frontend/script.js' %}"></script>
+    {% endblock %}
+
+
+
+
+
+        <!-- Font Awesome Library -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+
+      
+        <!-- Offcanvas Menu Begin -->
+        <div class="offcanvas-menu-overlay"></div>
+        <div class="offcanvas-menu-wrapper">
+            <div class="offcanvas__option">
+                <div class="offcanvas__links">
+                    {% if user.is_authenticated %}
+                                
+                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                
+                {% else %}
+                {% if request.path == '/login/' %}
+                
+                {% else %}
+                
+                {% endif %}
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+
+                {% endif %}
+                    
+                </div>
+                <div class="offcanvas__top__hover">
+                    <span>EN <i class="arrow_carrot-down"></i></span>
+                    <ul>
+                        <li>EN</li>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="offcanvas__nav__option">
+
+                <a href="{% url 'favorites'%}"><img src="{% static 'frontend/img/icon/heart.png' %}" alt=""></a>
+                <a href="{% url 'cart' %}"><span>0</span><img src="{% static 'frontend/img/icon/cart.png' %}" alt=""></a>
+                <div class="price"></div>
+            </div>
+            <div id="mobile-menu-wrap"></div>
+            <div class="offcanvas__text">
+                <p>Free shipping on orders over Rs 500, 30-day return or refund guarantee.</p>
+            </div>
+        </div>
+        <!-- Offcanvas Menu End -->
+    <!-- Header Section Begin -->
+    <header class="header">
+        <div class="header__top">
+                <div class="row justify-content-around align-items-center">
+                        <div class="header__top__left">
+                            <p>Free shipping on orders over Rs 500, 30-day return or refund guarantee.</p>
+                        </div>
+                        <div class="header__top__right">
+                            <div class="header__top__links">
+                                {% if user.is_authenticated %}
+                                
+                                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                                
+                                {% else %}
+                                {% if request.path == '/login/' %}
+                                
+                                {% else %}
+                                
+                                {% endif %}
+                                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+        
+                                {% endif %}
+                                
+                                
+
+                            </div>
+                            <div class="header__top__hover">
+                                <span>EN <i class="arrow_carrot-down"></i></span>
+                                <ul>
+                                    <li>EN</li>
+
+                                </ul>
+                            </div>
+                    </div>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="row flex-nowrap align-items-center">
+                    <div class="header__logo">
+                        <a href="{% url 'index' %}"><img src="{% static 'frontend/img/stylex2_new.png' %}" alt=""></a>
+                    </div>
+                    <div class="col-lg-2 col-md-8 col-6 d-flex justify-content-end align-items-center n-mobile">
+                        <a class="cart-link" href="{% url 'cart' %}">
+                            <span>0</span>
+                            <img src="{% static 'frontend/img/icon/cart.png' %}" alt="">
+                        </a>
+                        <div class="canvas__open"><i class="fa fa-bars"></i></div>
+                    </div>
+
+                <div style="margin-left: 80px;" class="col-lg-6 col-md-6 col-1 p-3 header__menu mobile-menu">
+                    <nav class="">
+                        <ul>
+                            {% if request.path == '/' %}
+                            <li class="nav-item active">
+                            {% else %}
+                            <li class="nav-item">
+                            {% endif %}
+                                <h5><a class="nav-link" href="{% url 'index' %}">HOME</a></h5>
+                            </li>
+                            {% if request.path|slice:":12" == '/products/M/'  %}
+                            <li class="nav-item active">
+                            {% else %}
+                            <li class="nav-item">
+                            {% endif %}
+                            
+                            <h5><a href="{% url 'show_products' 'M' %}">MEN</a></li></h5>
+                            {% if request.path|slice:":12" == '/products/W/'  %}
+                            <li class="nav-item active">
+                            {% else %}
+                            <li class="nav-item">
+                            {% endif %}
+                            <h5><a href="{% url 'show_products' 'W' %}">WOMEN</a></li></h5>
+                            {% if request.path|slice:":12" == '/products/K/'  %}
+                            <li class="nav-item active">
+                            {% else %}
+                            <li class="nav-item">
+                            {% endif %}
+                            <h5><a href="{% url 'show_products' 'K' %}">KIDS</a></li></h5>
+                            {% if request.path|slice:":8" == '/contact'  %}
+                            <li class="nav-item active">
+                            {% else %}
+                            <li class="nav-item">
+                            {% endif %}
+                            <h5><a href="{% url 'contact' %}">Contact Us</a></li></h5>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3 col-md-3 p-2 header__nav__option">
+                    <div class="">
+                        
+                        <a href="{% url 'favorites'%}"><img src="{% static 'frontend/img/icon/heart.png' %}" alt=""></a>
+                        <a href="{% url 'cart' %}"><span>
+                            {% if cart.count %}
+                            {{ cart.count }}
+                            {% else %}
+                            0
+                            {% endif %}
+                        </span><img src="{% static 'frontend/img/icon/cart.png' %}" alt=""></a>
+                        
+                        <div class="price">Rs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header Section End -->
+
+
+
+
+
+
+
+
+
+
+    {% block body %}
+    {% endblock %}
+</body>
+{% block footer %}
+   <!-- Footer Section Begin -->
+   <footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="footer__about">
+                    <div class="footer__logo">
+                        <a href="#{% url 'index' %}><img src="{% static 'frontend/img/stylex2_new.png' %}" alt=""></a>
+                    </div>
+                    <p>The customer is at the heart of our unique business model</p>
+
+                </div>
+            </div>
+            <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
+                <div class="footer__widget">
+                    <h6>Shopping</h6>
+                    <ul>
+                        <li><a href="#">Clothing Store</a></li>
+                        <li><a href="#">Trending Shoes</a></li>
+                        <li><a href="#">Accessories</a></li>
+                        <li><a href="#">Sale</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <div class="footer__widget">
+                    <h6>Shopping</h6>
+                    <ul>
+                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+
+                        <li><a href="{% url 'Return' %}">Return & Exchanges</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
+                <div class="footer__widget">
+                    <h6>NewsLetter</h6>
+                    <div class="footer__newslatter">
+                        <p>comming Soon!</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="footer__copyright__text">
+                    <!-- Link back to Atishay can't be removed. Template is licensed under CC BY 3.0. -->
+                    <p>Copyright ©
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        All rights reserved | This template is made with <i class="fa fa-heart-o"
+                        aria-hidden="true"></i> by <a href="https://Atishay.com" target="_blank">Atishay, Umesh</a>
+                    </p>
+                    <!-- Link back to Atishay can't be removed. Template is licensed under CC BY 3.0. -->
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Footer Section End -->
+{% endblock %}
+</html>
